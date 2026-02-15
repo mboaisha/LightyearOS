@@ -11,6 +11,8 @@ set -ouex pipefail
 
 # this installs a package from fedora repos
 dnf5 install -y tmux wget
+dnf5 -y copr enable atim/lapce
+dnf5 install -y lapce
 
 # Use a COPR Example:
 #
