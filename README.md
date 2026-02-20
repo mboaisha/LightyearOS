@@ -1,3 +1,26 @@
+# LightyearOS
+
+## Why?
+I am trying to learn how to make my own `bootc` image. Been meaning to switch to Linux given ~~Microsoft~~ Micro$lop's current direction with Windows. So far, I am focusing on reducing the friction before taking the plunge. I liked the way NixOS does things but learning Nix seems daunting and I don't got that kind of time and motivation just yet.
+
+## Philosophy
+My workflow often resembles that of someone that does (Linux) system administration and development... except I also do a lot of gaming. The image will be tailored with that mindset.
+
+## Usage
+
+When I test images, I usually start with a fresh install of [Fedora COSMIC Atomic](https://fedoraproject.org/atomic-desktops/cosmic/) then rebase from here.
+
+```
+sudo bootc switch ghcr.io/mboaisha/LightyearOS:latest
+```
+
+**NOTE: Currently, there are no non-Nvidia images at the moment. This image is specifically tailored for my use and my machines. Obviously, you are free to fork and do whatever you like with the code here but keep in mind that this is a learning project for me first and foremost and it will take a while until I reach anything resembling "stable"** 
+
+
+---
+
+# Original README from [image-template](https://github.com/ublue-os/image-template/blob/main/README.md)
+
 # image-template
 
 This repository is meant to be a template for building your own custom [bootc](https://github.com/bootc-dev/bootc) image. This template is the recommended way to make customizations to any image published by the Universal Blue Project.
