@@ -10,8 +10,24 @@ My workflow often resembles that of someone that does (Linux) system administrat
 
 When I test images, I usually start with a fresh install of [Fedora COSMIC Atomic](https://fedoraproject.org/atomic-desktops/cosmic/) then rebase from here.
 
+Three easy steps:
+
+Rebase
+
 ```
 sudo bootc switch ghcr.io/mboaisha/lightyearos:latest
+```
+
+Reboot
+
+```
+systemctl reboot
+```
+
+Check
+
+```
+sudo rpm-ostree status
 ```
 
 **NOTE: Currently, there are no non-Nvidia images at the moment. This image is specifically tailored for my use and my machines. Obviously, you are free to fork and do whatever you like with the code here but keep in mind that this is a learning project for me first and foremost and it will take a while until I reach anything resembling "stable"** 
