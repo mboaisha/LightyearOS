@@ -17,6 +17,11 @@ sudo bootc switch ghcr.io/mboaisha/LightyearOS:latest
 **NOTE: Currently, there are no non-Nvidia images at the moment. This image is specifically tailored for my use and my machines. Obviously, you are free to fork and do whatever you like with the code here but keep in mind that this is a learning project for me first and foremost and it will take a while until I reach anything resembling "stable"** 
 
 
+## Plans
+- Maybe get `CoolerControl` and `OpenRGB` working properly.
+- Figure out how to preinstall flatpaks with their correct permissions and configurations. i.e. Chromium with certain extensions already preloaded.
+- Add modified Niri dotfiles and perhaps some wallpapers.
+
 ---
 
 # Original README from [image-template](https://github.com/ublue-os/image-template/blob/main/README.md)
