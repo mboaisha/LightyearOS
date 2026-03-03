@@ -11,10 +11,7 @@ set -ouex pipefail
 
 # this installs a package from fedora repos
 dnf5 install -y \
-    tmux \
-    tailscale \
-    virt-manager \
-    libvirt
+    tmux
 
 # Use a COPR Example:
 #
@@ -26,5 +23,3 @@ dnf5 install -y \
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
-systemctl enable tailscaled.service
-systemctl enable libvirtd.service
