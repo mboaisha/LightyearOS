@@ -23,3 +23,9 @@ dnf5 install -y \
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
+
+
+### Greeter wallpaper: mutable
+mkdir -p /etc/lightyearos
+ln -sf /usr/share/backgrounds/lightyearos/wallpaper-01.jpg \
+    /etc/lightyearos/greeter-background

@@ -12,6 +12,10 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build.sh
 
+# System file overlays (wallpapers, configs, etc)
+COPY system_files/ /
+
+COPY system_files/usr/share/backgrounds/lightyearos/ /usr/share/backgrounds/lightyearos
 ### LINTING
 ## Verify final image and contents are correct.
 RUN bootc container lint
