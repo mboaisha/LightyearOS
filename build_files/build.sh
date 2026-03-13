@@ -69,6 +69,9 @@ dnf5 clean all
 
 # ── Systemd services ───────────────────────────────────────────────────────────
 
+# ── Systemd services ───────────────────────────────────────────────────────────
+
+rm -f /etc/systemd/system/display-manager.service
 systemctl enable greetd.service
 ln -sf /usr/lib/systemd/system/greetd.service \
     /etc/systemd/system/display-manager.service
