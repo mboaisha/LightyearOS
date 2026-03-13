@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - main
+      - lightyearos-base-migration
     paths-ignore:
       - '**/README.md'
   workflow_dispatch:

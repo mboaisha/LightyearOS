@@ -1,0 +1,35 @@
+output "DP-1" {
+    mode "2560x1440@119.998"
+    scale 1
+    position x=0 y=440
+}
+
+output "DP-3" {
+    mode "2560x1440@119.998"
+    scale 1
+    position y=0 x=2560
+}
+
+cursor {
+    xcursor-size 52
+}
+
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+
+input {
+    keyboard {
+        xkb
+        numlock
+    }
+    touchpad {
+        tap
+        accel-profile "adaptive"
+        click-method "clickfinger"
+    }
+    mouse {
+        accel-profile "flat"
+    }
+    trackpoint
+}

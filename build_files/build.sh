@@ -1,31 +1,72 @@
 #!/bin/bash
+# LightyearOS image build script
 
 set -ouex pipefail
 
-### Install packages
+# ── COPRs ──────────────────────────────────────────────────────────────────────
 
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/43/x86_64/repoview/index.html&protocol=https&redirect=1
+dnf5 -y copr enable yalter/niri-git
+dnf5 -y copr enable avengemedia/danklinux
+dnf5 -y copr enable avengemedia/dms
+dnf5 -y copr enable bieszczaders/kernel-cachyos-addons
 
-# this installs a package from fedora repos
+# ── Niri + DMS desktop stack ───────────────────────────────────────────────────
+
+dnf5 install -y \
+    niri \
+    iio-niri \
+    xwayland-satellite \
+    dms \
+    dms-cli \
+    dms-greeter \
+    quickshell \
+    matugen \
+    cliphist \
+    danksearch \
+    dgop \
+    foot \
+    greetd \
+    greetd-selinux \
+    chezmoi \
+    xdg-desktop-portal-gtk \
+    accountsservice
+
+# ── Hardware: AIO + fans + RGB ─────────────────────────────────────────────────
+
+dnf5 install -y \
+    coolercontrol \
+    liquidctl \
+    lm_sensors \
+    kmod-it87
+
+# ── Sysadmin tools ─────────────────────────────────────────────────────────────
+
 dnf5 install -y \
     tmux
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+# ── Disable COPRs ──────────────────────────────────────────────────────────────
 
-#### Example for enabling a System Unit File
+dnf5 -y copr disable yalter/niri-git
+dnf5 -y copr disable avengemedia/danklinux
+dnf5 -y copr disable avengemedia/dms
+dnf5 -y copr disable bieszczaders/kernel-cachyos-addons
 
+# ── Cleanup ────────────────────────────────────────────────────────────────────
+
+dnf5 clean all
+
+# ── Systemd services ───────────────────────────────────────────────────────────
+
+systemctl enable greetd.service
+ln -sf /usr/lib/systemd/system/greetd.service \
+    /etc/systemd/system/display-manager.service
+systemctl disable gdm.service 2>/dev/null || true
+systemctl enable coolercontrold.service
+systemctl enable load-it87.service
 systemctl enable podman.socket
 
+# ── Greeter wallpaper symlink ──────────────────────────────────────────────────
 
-### Greeter wallpaper: mutable
 mkdir -p /etc/lightyearos
 ln -sf /usr/share/backgrounds/lightyearos/wallpaper-01.jpg \
     /etc/lightyearos/greeter-background

@@ -1,0 +1,13 @@
+[Unit]
+Description=Load it87 kernel module for Gigabyte B850 fan sensors
+DefaultDependencies=no
+After=systemd-udev-settle.service
+Before=lm_sensors.service coolercontrold.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/modprobe it87 force_id=0x8689
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
