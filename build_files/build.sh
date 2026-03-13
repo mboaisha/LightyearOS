@@ -14,7 +14,6 @@ dnf5 -y copr enable bieszczaders/kernel-cachyos-addons
 
 dnf5 install -y \
     niri \
-    iio-niri \
     xwayland-satellite \
     dms \
     dms-cli \
@@ -27,9 +26,7 @@ dnf5 install -y \
     foot \
     greetd \
     greetd-selinux \
-    chezmoi \
-    xdg-desktop-portal-gtk \
-    accountsservice
+    chezmoi
 
 # ── Hardware: AIO + fans + RGB ─────────────────────────────────────────────────
 
