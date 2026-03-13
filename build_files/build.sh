@@ -37,22 +37,20 @@ sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/terra.repo
 dnf5 install -y coolercontrol
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/terra.repo
 
-# ── Hardware: it87 kmod ────────────────────────────────────────────────────────
-# Gigabyte B850 needs it87 for fan header access via hwmon
-# it87-extras is an akmod — source gets compiled against current kernel headers
-# bazzite-dx-nvidia ships kernel-devel so headers are available
+# ── Hardware: it87 ─────────────────────────────────────────────────────────────
+# Bazzite's kernel (6.17+) already includes the it87-extras patches in-tree.
+# Verified: IT8790E, IT8628E, IT8772E, IT87952E chip IDs present in
+# /usr/lib/modules/*/kernel/drivers/hwmon/it87.ko.xz
+#
+# All we need is:
+#   1. Load the in-tree module at boot
+#   2. Kernel arg for ACPI register access on Gigabyte boards
 
-dnf5 -y copr enable grandpares/it87-extras
-dnf5 install -y it87-extras
-akmods --force
-dnf5 -y copr disable grandpares/it87-extras
+mkdir -p /usr/lib/modules-load.d
+echo "it87" > /usr/lib/modules-load.d/it87.conf
 
-# Verify the kmod actually compiled
-KVER=$(rpm -q kernel --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' | tail -1)
-if ! ls /usr/lib/modules/${KVER}/extra/it87.ko* 1>/dev/null 2>&1; then
-    echo "ERROR: it87 kmod failed to build for kernel ${KVER}" >&2
-    exit 1
-fi
+mkdir -p /usr/lib/kernel/cmdline.d
+echo "acpi_enforce_resources=lax" > /usr/lib/kernel/cmdline.d/it87.conf
 
 # ── Sysadmin tools ─────────────────────────────────────────────────────────────
 
@@ -77,18 +75,6 @@ ln -sf /usr/lib/systemd/system/greetd.service \
 systemctl disable gdm.service 2>/dev/null || true
 systemctl enable coolercontrold.service
 systemctl enable podman.socket
-
-# ── Kernel module loading ──────────────────────────────────────────────────────
-# modules-load.d is the standard mechanism — no custom service needed
-
-mkdir -p /usr/lib/modules-load.d
-echo "it87" > /usr/lib/modules-load.d/it87.conf
-
-# ── Kernel arguments ──────────────────────────────────────────────────────────
-# acpi_enforce_resources=lax required on Gigabyte B850 for it87 register access
-
-mkdir -p /usr/lib/kernel/cmdline.d
-echo "acpi_enforce_resources=lax" > /usr/lib/kernel/cmdline.d/it87.conf
 
 # ── Greeter wallpaper symlink ──────────────────────────────────────────────────
 
