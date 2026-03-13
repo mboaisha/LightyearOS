@@ -27,30 +27,34 @@ dnf5 install -y \
     greetd-selinux \
     chezmoi
 
-# ── Hardware-specific ─────────────────────────────────────────────────
+# ── Hardware: CoolerControl + liquidctl ────────────────────────────────────────
+# liquidctl: CLI/lib for controlling liquid coolers, fans, LEDs (Fedora repos)
+# coolercontrol: GUI daemon for fan curves and AIO (Terra repo, disabled in Bazzite)
 
-# Trying to follow how Bazzite installs CoolerControl and Liquidctl
+dnf5 install -y liquidctl
 
-# liquidctl is in Fedora repos
-dnf5 install -y \
-    liquidctl
-# Enable Terra and install CoolerControl
 sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/terra.repo
 dnf5 install -y coolercontrol
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/terra.repo
 
-# it87 kmod for Gigabyte B850 fan headers
-# it87-extras is an akmod — installs source, akmods --force compiles it
-# kernel-devel is available because we're on bazzite-dx-nvidia
+# ── Hardware: it87 kmod ────────────────────────────────────────────────────────
+# Gigabyte B850 needs it87 for fan header access via hwmon
+# it87-extras is an akmod — source gets compiled against current kernel headers
+# bazzite-dx-nvidia ships kernel-devel so headers are available
+
 dnf5 -y copr enable grandpares/it87-extras
 dnf5 install -y it87-extras
 akmods --force
 dnf5 -y copr disable grandpares/it87-extras
 
+# Verify the kmod actually compiled
+KVER=$(rpm -q kernel --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' | tail -1)
+if ! ls /usr/lib/modules/${KVER}/extra/it87.ko* 1>/dev/null 2>&1; then
+    echo "ERROR: it87 kmod failed to build for kernel ${KVER}" >&2
+    exit 1
+fi
+
 # ── Sysadmin tools ─────────────────────────────────────────────────────────────
-# Here, I will throw more tools in after a successful build.
-# Once I figure out how to pre-install flatpaks here
-# or in the containerfile
 
 dnf5 install -y \
     tmux
@@ -72,22 +76,19 @@ ln -sf /usr/lib/systemd/system/greetd.service \
     /etc/systemd/system/display-manager.service
 systemctl disable gdm.service 2>/dev/null || true
 systemctl enable coolercontrold.service
-systemctl enable load-it87.service
 systemctl enable podman.socket
 
-# ── Kernel arguments ───────────────────────────────────────────────────────────
+# ── Kernel module loading ──────────────────────────────────────────────────────
+# modules-load.d is the standard mechanism — no custom service needed
 
-# Required on some boards for it87 to access fan control registers
-# Gigabyte B850 falls into this category
-# In build.sh
+mkdir -p /usr/lib/modules-load.d
+echo "it87" > /usr/lib/modules-load.d/it87.conf
 
-# As per https://copr.fedorainfracloud.org/coprs/grandpares/it87-extras/
-# "Some motherboards may require karg acpi_enforce_resources=lax to load the driver."
-# I suspect my motherboard requires it.
+# ── Kernel arguments ──────────────────────────────────────────────────────────
+# acpi_enforce_resources=lax required on Gigabyte B850 for it87 register access
 
 mkdir -p /usr/lib/kernel/cmdline.d
-echo "acpi_enforce_resources=lax" > \
-    /usr/lib/kernel/cmdline.d/it87.conf
+echo "acpi_enforce_resources=lax" > /usr/lib/kernel/cmdline.d/it87.conf
 
 # ── Greeter wallpaper symlink ──────────────────────────────────────────────────
 
