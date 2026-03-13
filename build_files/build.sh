@@ -28,13 +28,11 @@ dnf5 install -y \
     greetd-selinux \
     chezmoi
 
-# ── Hardware: AIO + fans + RGB ─────────────────────────────────────────────────
+# ── Hardware: stuff ─────────────────────────────────────────────────
 
 dnf5 install -y \
     coolercontrol \
-    liquidctl \
-    lm_sensors \
-    kmod-it87
+    liquidctl 
 
 # ── Sysadmin tools ─────────────────────────────────────────────────────────────
 
